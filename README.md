@@ -1,6 +1,6 @@
 # sudokuSolver
 
-This is a Java program that solves Sudokus.
+This is a Java program that solves Sudokus using Backtracking.
 
 The Graphic User Interface (GUI) consists in several JButtons for each of the digits and a main JButton to start solving Sudoku. These buttons for the digits are grouped in JPanels.
 
