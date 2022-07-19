@@ -1,4 +1,4 @@
-# sudokuSolver
+# Sudoku Solver
 
 This is a Java program that solves Sudokus using Backtracking.
 
