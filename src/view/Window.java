@@ -3,32 +3,32 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
-import controller.SudokuSolver;
 import model.Constants;
+import model.Sudoku;
 
 public class Window extends JFrame{
 
-	/**
-	 * Jessica Marin 
-	 * 15 Jul 22
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	
 	private final int WIDTH_PX = 500;
 	private final int HEIGHT_PX = 500;
 	
-	private JButton solveButton;
+	private final JButton solveButton;
 	
-	private SudokuBoard sudokuBoard;
+	private final SudokuBoard sudokuBoard;
+	
+	private Sudoku sudoku;
 	
 	
 	
-	public Window(SudokuSolver sudokuSolver) {
+	public Window() {
 		setSize(WIDTH_PX, HEIGHT_PX);
 		setVisible(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -37,13 +37,35 @@ public class Window extends JFrame{
 		solveButton=new JButton();
 		solveButton.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				sudokuBoard.disableButtons();
-				sudokuSolver.solve();
+				(new SolveSudokuThread()).start();
+				solveButton.setEnabled(false);
 			}
 		});
 		solveButton.setText("Solve Sudoku");
 		add(BorderLayout.SOUTH,solveButton);
 		add(BorderLayout.CENTER,sudokuBoard=new SudokuBoard());
+	}
+	
+	private void addSolutionToView(List<Byte> sol) {
+		sudokuBoard.setBoardSolution(sol);
+	}
+	
+	private class SolveSudokuThread extends Thread{
+
+		public void run() {
+			List<Byte> solution;
+			sudokuBoard.disableButtons();
+			sudoku=new Sudoku(sudokuBoard.getSudokuBoardRepresentation());
+			sudoku.solve();
+			solution=sudoku.getSolution();
+			if(solution!=null) {
+				addSolutionToView(solution);
+			}else {
+				JOptionPane.showMessageDialog(null, "This Sudoku does not have a solution :( ");
+			}
+			
+		}
+		
 	}
 	
 

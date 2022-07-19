@@ -17,16 +17,26 @@ public class SudokuBoard extends JPanel{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private JButton[] buttons=new JButton[Constants.DIMENSION*Constants.DIMENSION];
+	private final JButton[] buttons=new JButton[Constants.DIMENSION*Constants.DIMENSION];
+	
+	private final JPanel[] buttonsPanels=new JPanel[Constants.DIMENSION];
 	
 	
 	SudokuBoard(){
 		int i,j;
-		setLayout(new GridLayout(Constants.DIMENSION,Constants.DIMENSION));
-		
-		for(i=0,j=Constants.DIMENSION*Constants.DIMENSION; i<j; i++) {
-			add(buttons[i]=new Button());
+		int aux;
+		int n=(int) Math.sqrt(Constants.DIMENSION);
+		setLayout(new GridLayout(n,n,10,10));
+		for(i=0;i<buttonsPanels.length;i++) {
+			buttonsPanels[i]=new JPanel();
+			buttonsPanels[i].setLayout(new GridLayout(n,n));
 		}
+		for(i=0,j=buttons.length; i<j; i++) {
+			aux=(i%Constants.DIMENSION)/n;
+			buttonsPanels[((i/Constants.DIMENSION)/n)*n+aux].add(buttons[i]=new Button());
+			
+		}
+		Arrays.asList(buttonsPanels).forEach(p->add(p));
 	}
 
 
@@ -38,15 +48,21 @@ public class SudokuBoard extends JPanel{
 		getSudokuBoardRepresentation();
 	}
 	
+	public void setBoardSolution(List<Byte> sol) {
+		int i,j;
+		for(i=0,j=sol.size(); i < j; i++) {
+			buttons[i].setText(Byte.toString(sol.get(i)));
+		}
+	}
+	
 	public List<Byte> getSudokuBoardRepresentation(){
 		return Arrays.asList(buttons).stream().map(b->{
 			String s;
-			Byte zero=0;
 			s=b.getText();
 			if(!s.isEmpty()) {
 				return Byte.parseByte(s);
 			}else {
-				return zero;
+				return Constants.DEFAULT_VALUE;
 			}
 		}).collect(Collectors.toList());
 		
